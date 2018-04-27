@@ -1,0 +1,112 @@
+---
+title: "Duval County Public Schools Statistics"
+output: html_notebook
+---
+
+Copied some data about Duval County Schools from the [office for civil rights](https://ocrdata.ed.gov/Page?t=d&eid=31606&syk=8&pid=2278).
+
+```{r}
+#download the data
+dataset <- read.csv("https://osf.io/4nucp/download")
+
+```
+```{r, echo=FALSE, results='hide'}
+#melt the data for graphing
+if (!require(reshape2)){
+  install.packages("reshape2", dependencies = TRUE)
+  require(reshape2)
+}
+dataset.melt <-  melt(dataset, id="Race")
+```
+```{r, echo=FALSE, results='hide'}
+if (!require(tidyverse)){
+  install.packages("tidyverse", dependencies = TRUE)
+  require(tidyverse)
+}
+```
+```{r, echo=FALSE}
+if (!require(ggplot2)){
+  install.packages("ggplot2", dependencies = TRUE)
+  require(ggplot2)
+}
+```
+This chart shows the percentage of students by race in the system. It also shows the percentage of students that get in-school suspensions by race. Black students are 2.7 times more likely to get an in-school suspension than White students.
+
+```{r, echo=FALSE}
+dataset.melt %>% filter(variable=="Enrollment" | variable=="In.School.Suspension") %>% ggplot(aes(x = value, y=Race)) + 
+  geom_line(aes(group = Race)) + 
+  geom_point(aes(color=variable), size=4, alpha = .6) +
+  scale_color_manual(values = c("#BE1C42", "#009CFD"), labels=c("% of enrolled students","% of in-school-suspensions")) +
+  scale_x_continuous(labels=scales::percent_format(), limits = (c(0, 1))) +
+  labs(title = "Duval County Schools", subtitle = "Racial Disparities in In-School-Suspensions", x = "Source: https://ocrdata.ed.gov/Page?t=d&eid=31606&syk=8&pid=2278") +
+  theme_minimal() + 
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.title = element_blank(),
+        legend.position = "top",
+        axis.title.y = element_blank())
+#ggsave("inschool.png")
+```
+Think that’s bad? This chart shows the same information for out-of-school suspensions. Black students are 4.11 times more likely to receive out-of-school suspensions than White students.
+```{r, echo=FALSE}
+dataset.melt %>% filter(variable=="Enrollment" | variable=="Out.of.School.Suspension") %>% ggplot(aes(x = value, y=Race)) + 
+  geom_line(aes(group = Race)) + 
+  geom_point(aes(color=variable), size=4, alpha = .6) +
+  scale_color_manual(values = c("#BE1C42", "#009CFD"), labels=c("% of enrolled students","% of out-of-school-suspensions")) +
+  scale_x_continuous(labels=scales::percent_format(), limits = (c(0, 1))) +
+  labs(title = "Duval County Schools", subtitle = "Racial Disparities in Out-of-School-Suspensions", x = "Source: https://ocrdata.ed.gov/Page?t=d&eid=31606&syk=8&pid=2278") +
+  theme_minimal() + 
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.title = element_blank(),
+        legend.position = "top",
+        axis.title.y = element_blank())
+#ggsave("outofschool.png")
+```
+In the past, racists have told me that this is all OK because many Black students don’t even want to be there. This chart shows that isn’t true. No racial disparities when it comes absenteeism.
+
+When the adults make the decision, they are 4.11 times more likely to keep Black students out of school than White students. When Black students (and their families) make the decision, no racial disparity!
+
+```{r, echo=FALSE}
+dataset.melt %>% filter(variable=="Enrollment" | variable=="chronically.absent") %>% ggplot(aes(x = value, y=Race)) + 
+  geom_line(aes(group = Race)) + 
+  geom_point(aes(color=variable), size=4, alpha = .6) +
+  scale_color_manual(values = c("#BE1C42", "#009CFD"), labels=c("% of enrolled students","% chronically absent")) +
+  scale_x_continuous(labels=scales::percent_format(), limits = (c(0, 1))) +
+  labs(title = "Duval County Schools", subtitle = "Racial Disparities in absenteeism", x = "Source: https://ocrdata.ed.gov/Page?t=d&eid=31606&syk=8&pid=2278") +
+  theme_minimal() + 
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.title = element_blank(),
+        legend.position = "top",
+        axis.title.y = element_blank())
+#ggsave("chronicallyabsent.png")
+```
+Black students don’t just get more negative treatment. They also get less positive treatment.  Black students are 4.6 times less likely to get identified as gifted and talented.
+```{r, echo=FALSE}
+dataset.melt %>% filter(variable=="Enrollment" | variable=="Gifted.and.Talented") %>% ggplot(aes(x = value, y=Race)) + 
+  geom_line(aes(group = Race)) + 
+  geom_point(aes(color=variable), size=4, alpha = .6) +
+  scale_color_manual(values = c("#BE1C42", "#009CFD"), labels=c("% of enrolled students","% streamed Gifted and Talented")) +
+  scale_x_continuous(labels=scales::percent_format(), limits = (c(0, 1))) +
+  labs(title = "Duval County Schools", subtitle = "Racial Disparities in streaming kids into Gift and Talented Programs", x = "Source: https://ocrdata.ed.gov/Page?t=d&eid=31606&syk=8&pid=2278") +
+  theme_minimal() + 
+  theme(panel.grid.major.x = element_blank(),
+        panel.grid.minor = element_blank(),
+        legend.title = element_blank(),
+        legend.position = "top",
+        axis.title.y = element_blank())
+#ggsave("giftedandtalented.png")
+```
+To begin the process of changing how Black students are treated in the system, we need someone at the top who cares. Time to ask the six candidates what they think about this and what they’d do about it.
+
+
+
+
+
+
+
+
+
+
+
